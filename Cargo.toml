@@ -1,9 +1,11 @@
 [package]
 name = "flappybird_bevy"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-bevy = { version = "0.16.0",features = ["dynamic_linking"]}
-bevy_dylib = "0.16.0"
+bevy = { version = "0.16.0" }
+bevy_app = { version = "0.16.0" }
+bevy-inspector-egui = "0.31.0"
+bevy_egui = "0.34.0"
 rand = "0.8.5"

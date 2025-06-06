@@ -1,28 +1,39 @@
 use bevy::prelude::*;
 use bevy::{color::palettes::css::BLUE, window::PrimaryWindow};
+use bevy_egui::{egui, EguiContext};
+use bevy_inspector_egui::bevy_egui::{EguiContextPass, EguiPlugin};
+use bevy_inspector_egui::quick::{AssetInspectorPlugin, WorldInspectorPlugin};
 use rand::{rngs::ThreadRng, thread_rng, Rng};
 
+mod inspector;
+use inspector::install_inspector;
 fn main() {
-    App::new()
-        .add_plugins(
-            DefaultPlugins
-                .set(WindowPlugin {
-                    primary_window: Some(Window {
-                        title: String::from("Flappybird"),
-                        position: WindowPosition::Centered(MonitorSelection::Primary),
-                        resolution: Vec2::new(512., 512.).into(),
-                        ..Default::default()
-                    }),
+    let mut app = App::new();
+    install_inspector(&mut app);
+    app.add_plugins(
+        DefaultPlugins
+            .set(WindowPlugin {
+                primary_window: Some(Window {
+                    title: String::from("Flappybird"),
+                    position: WindowPosition::Centered(MonitorSelection::Primary),
+                    resolution: Vec2::new(512., 512.).into(),
                     ..Default::default()
-                })
-                .set(ImagePlugin::default_nearest()),
-        )
-        .add_systems(Startup, setup_level)
-        .add_systems(
-            Update,
-            (update_bird, update_obstacles, draw_coordinate_system),
-        )
-        .run();
+                }),
+                ..Default::default()
+            })
+            .set(ImagePlugin::default_nearest()),
+    )
+    .add_plugins(EguiPlugin {
+        enable_multipass_for_primary_context: true,
+    })
+    // .add_plugins(WorldInspectorPlugin::new())
+    .add_plugins(AssetInspectorPlugin::<StandardMaterial>::default())
+    .add_systems(Startup, setup_level)
+    .add_systems(
+        Update,
+        (update_bird, update_obstacles, draw_coordinate_system),
+    )
+    .run();
 }
 
 fn draw_coordinate_system(
